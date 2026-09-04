@@ -83,3 +83,7 @@ python3 tools/build.py --stock mfp-daemon.stock
 ## 免责声明
 
 仅供个人设备研究与自定义, 由此带来的安全权衡 (锁定保护被关闭) 由使用者自行承担。
+
+## License
+
+[MIT](LICENSE)
