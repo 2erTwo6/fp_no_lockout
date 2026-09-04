@@ -15,6 +15,7 @@
 
 ## 安装
 
+- 先构建刷入包: `python3 tools/build.py --stock mfp-daemon.stock` (从你手机上拉的原版 HAL 生成)
 - KernelSU 管理器 / Magisk / TWRP 刷入 `fp_no_lockout_v1.0.zip`
 - 或命令行: `ksud module install fp_no_lockout_v1.0.zip`
 - 重启生效; 验证: `md5sum /odm/bin/hw/mfp-daemon` 应为
@@ -67,8 +68,7 @@ python3 tools/build.py --stock mfp-daemon.stock
 │   ├── uninstall.sh
 │   ├── bin/mfp-daemon         # 补丁版二进制
 │   └── META-INF/...           # Magisk/TWRP 安装器 stub
-├── tools/build.py             # 从原版二进制生成补丁并打包 zip
-└── fp_no_lockout_v1.0.zip     # 已打包的刷入包
+└── tools/build.py             # 从原版二进制生成补丁并打包 zip (产出 fp_no_lockout_v1.0.zip)
 ```
 
 ## 技术要点 (踩坑记录)
