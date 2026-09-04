@@ -1,0 +1,6 @@
+id=fp_no_lockout
+name=FP No Lockout (mfp-daemon patch)
+version=v1.0
+versionCode=1
+author=generated for user
+description=Neutralize fingerprint failed-attempt lockout at HAL source (mfp-daemon, goodix_us2). Patches: failed_match_count increment -> NOP; per-screenlock quota check forced nonzero. Timed (30s) and permanent lockout can never trigger. Failsafe: verifies stock binary md5 before mounting, auto-skips on OTA mismatch.
