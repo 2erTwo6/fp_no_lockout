@@ -7,7 +7,7 @@ Takes a stock mfp-daemon binary (pulled from /odm/bin/hw/mfp-daemon), applies th
 two-instruction lockout-neuter patch, and repacks the KernelSU/Magisk module zip.
 
 Usage:
-    python3 tools/build.py --stock mfp-daemon.stock [--out-zip fp_no_lockout_v1.0.zip]
+    python3 tools/build.py --stock mfp-daemon.stock [--out-zip fp_no_lockout_v1.1.zip]
 """
 
 import argparse
@@ -75,7 +75,7 @@ def build_zip(out: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stock", required=True, help="path to stock /odm/bin/hw/mfp-daemon")
-    ap.add_argument("--out-zip", default=str(REPO / "fp_no_lockout_v1.0.zip"))
+    ap.add_argument("--out-zip", default=str(REPO / "fp_no_lockout_v1.1.zip"))
     args = ap.parse_args()
 
     stock = Path(args.stock).read_bytes()
