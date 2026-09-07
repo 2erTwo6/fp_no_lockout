@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """FP No Lockout - build tool.
 
+Author: 2erTwo6
+
 Takes a stock mfp-daemon binary (pulled from /odm/bin/hw/mfp-daemon), applies the
 two-instruction lockout-neuter patch, and repacks the KernelSU/Magisk module zip.
 

@@ -1,5 +1,6 @@
 ui_print "************************************"
 ui_print "  FP No Lockout (mfp-daemon patch)"
+ui_print "  Author: 2erTwo6"
 ui_print "************************************"
 ui_print "- 目标: HyperOS goodix_us2 指纹 HAL (mfp-daemon)"
 ui_print "- 效果: 指纹失败次数锁定 (5次定时/20次永久) 永不触发"

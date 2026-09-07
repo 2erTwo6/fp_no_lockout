@@ -1,5 +1,7 @@
 # FP No Lockout
 
+> Author: **2erTwo6** ([@2erTwo6](https://github.com/2erTwo6))
+
 解除 HyperOS 指纹「失败次数过多」锁定机制 (5 次失败 → 30 秒定时锁 / 累计 20 次 → 永久锁)。
 适用于指纹 HAL 在 **mfp-daemon** 里做锁定计数的机型。
 
@@ -86,4 +88,4 @@ python3 tools/build.py --stock mfp-daemon.stock
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) © 2026 2erTwo6
