@@ -57,7 +57,12 @@ CMP_20 = bytes.fromhex("1f510071")  # cmp w8, #0x14
 # single PT_LOAD for .text in this binary.
 VERSIONS: dict[str, dict] = {
     "os4.0": {
-        "rom": "HyperOS 4 / OS4.0.3.0.XPLCNXM (Android 17, 17OS4.0.261020.230009638.MTPECN.S)",
+        # OS4.0.4.0 OTA ships the very same mfp-daemon binary (md5 f943889a...),
+        # so one patched build serves 4.0.3.0 and 4.0.4.0 alike.
+        "rom": (
+            "HyperOS 4 / OS4.0.3.0.XPLCNXM + OS4.0.4.0.XPLCNXM (Android 17, "
+            "17OS4.0.261020.230009638 / 17OS4.0.261028.233904816 MTPECN.S)"
+        ),
         "stock_md5": "f943889add94013ab08e9749cc29f077",
         "patched_md5": "d6ef30b1bf6e9a1a23cef7f6172f7f88",
         "out": "mfp-daemon.os4",
@@ -270,7 +275,7 @@ def main() -> None:
         action="store_true",
         help="for unknown ROMs, locate the patch sites by structural signature",
     )
-    ap.add_argument("--out-zip", default=str(REPO / "fp_no_lockout_v1.2.zip"))
+    ap.add_argument("--out-zip", default=str(REPO / "fp_no_lockout_v1.3.zip"))
     args = ap.parse_args()
 
     if not args.stock:

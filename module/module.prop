@@ -1,6 +1,6 @@
 id=fp_no_lockout
 name=FP No Lockout (mfp-daemon patch)
-version=v1.2
-versionCode=3
+version=v1.3
+versionCode=4
 author=2erTwo6
-description=Neutralize fingerprint failed-attempt lockout at HAL source (mfp-daemon, goodix_us2). Patches: failed_match_count increment -> NOP; per-screenlock quota check forced nonzero. Timed (30s) and permanent lockout can never trigger. Ships one patched binary per ROM (HyperOS 3 OS3.0, HyperOS 4 OS4.0.3.0); boot script hashes the stock HAL and mounts the matching build, auto-skips on OTA mismatch.
+description=Neutralize fingerprint failed-attempt lockout at HAL source (mfp-daemon, goodix_us2). Patches: failed_match_count increment -> NOP; per-screenlock quota check forced nonzero. Timed (30s) and permanent lockout can never trigger. Ships one patched binary per ROM (HyperOS 3 OS3.0, HyperOS 4 OS4.0.3.0/OS4.0.4.0); boot script hashes the stock HAL and mounts the matching build, auto-skips on OTA mismatch.

@@ -10,8 +10,13 @@
 >
 > | ROM | 版本串 | 原版 HAL md5 | 补丁后 md5 |
 > |---|---|---|---|
-> | HyperOS 4 (Android 17) | `OS4.0.3.0.XPLCNXM` / `17OS4.0.261020.230009638.MTPECN.S` | `f943889add94013ab08e9749cc29f077` | `d6ef30b1bf6e9a1a23cef7f6172f7f88` |
+> | HyperOS 4 (Android 17) | `OS4.0.3.0.XPLCNXM` / `OS4.0.4.0.XPLCNXM` | `f943889add94013ab08e9749cc29f077` | `d6ef30b1bf6e9a1a23cef7f6172f7f88` |
 > | HyperOS 3 (Android 16) | `OS3.0` | `9d50fe61dfb66bac6dc5facff9f860c4` | `b070144e292963eafccd2d6083f3ce87` |
+>
+> `OS4.0.4.0.XPLCNXM` (build `17OS4.0.261028.233904816.MTPECN.S`) 的 OTA **没有改动**
+> `mfp-daemon`: 与原 4.0.3.0 的二进制逐字节相同, 所以同一套补丁直接通用, 无新增二进制。
+> 实机确认 (`2602BRT18C` / `OS4.0.4.0.XPLCNXM`): 模块正常激活, 正在运行的
+> `/proc/$(pidof mfp-daemon)/exe` md5 等于上表补丁后 md5, 即 4.0.4 上跑的已是补丁版。
 >
 > 其他机型需要重新逆向适配, 见 [补丁原理](#补丁原理) 与 [适配新 ROM](#适配新-rom)。
 
@@ -24,10 +29,10 @@
 
 ## 安装
 
-- 直接刷 `fp_no_lockout_v1.2.zip`
+- 直接刷 `fp_no_lockout_v1.3.zip`
 - KernelSU 管理器 / Magisk / TWRP 均可, 或命令行:
-  - KernelSU: `ksud module install fp_no_lockout_v1.2.zip`
-  - APatch: `/data/adb/apd module install fp_no_lockout_v1.2.zip` (装完写入
+  - KernelSU: `ksud module install fp_no_lockout_v1.3.zip`
+  - APatch: `/data/adb/apd module install fp_no_lockout_v1.3.zip` (装完写入
     `modules_update/`, **必须重启**才替换)
 - 重启生效; 验证:
   - `md5sum /odm/bin/hw/mfp-daemon` 应等于上表「补丁后 md5」中与你 ROM 对应的那行
@@ -69,6 +74,9 @@
 > 全部前移), `x_log` 被裁掉换成一个 48 字节的日志桩, `FodEngineCore::setFodAuthState` 加了
 > 空指针检查。**锁定状态机本身逐条指令等价** (只有 adrp/add/bl 的相对操作数不同),
 > 因此两个版本用完全相同的两条补丁, 偏移也一致。
+>
+> OS4.0.4.0 相对 OS4.0.3.0: `mfp-daemon` 未改动 (md5 依旧 `f943889a...`), 补丁点、
+> 补丁后 md5 全部不变。
 
 ## 从源码构建
 
@@ -77,16 +85,18 @@
 ```sh
 scp phone:/odm/bin/hw/mfp-daemon mfp-daemon.stock
 python3 tools/build.py --stock mfp-daemon.stock
-# 产出: module/bin/mfp-daemon.<版本> + fp_no_lockout_v1.2.zip
+# 产出: module/bin/mfp-daemon.<版本> + fp_no_lockout_v1.3.zip
 ```
 
 - 已知 ROM 自动按 md5 命中 `VERSIONS` 表, 并校验补丁后 md5
+- 4.0.3.0 → 4.0.4.0 属于「md5 未变」的 OTA: 直接命中 `os4.0` 条目, 无需新增条目
 - 只重新打包 (不再改二进制) 时: `python3 tools/build.py` (读取 `module/bin` 现有文件)
 - 一次打多个 ROM: 重复 `--stock` 即可, 每个版本一个补丁二进制, `versions.conf` 自动生成
 
 ## 适配新 ROM
 
-系统更新后 md5 一定变, 但锁定代码通常没动:
+大多数系统更新会重编 `mfp-daemon` (md5 变, 需要重新适配), 但锁定代码通常没动; 也有
+OTA 完全不动该二进制的情况 (如 4.0.3.0 → 4.0.4.0, md5 不变, 直接沿用现有条目):
 
 ```sh
 scp phone:/odm/bin/hw/mfp-daemon mfp-daemon.new.stock
@@ -115,7 +125,7 @@ python3 tools/build.py --stock mfp-daemon.new.stock --scan
 │   ├── bin/mfp-daemon.os4     # 补丁版 (HyperOS 4)
 │   ├── bin/mfp-daemon.os3     # 补丁版 (HyperOS 3)
 │   └── META-INF/...           # Magisk/TWRP 安装器 stub
-└── tools/build.py             # 打补丁 + 打包 zip (产出 fp_no_lockout_v1.2.zip)
+└── tools/build.py             # 打补丁 + 打包 zip (产出 fp_no_lockout_v1.3.zip)
 ```
 
 ## 技术要点 (踩坑记录)
@@ -131,7 +141,7 @@ python3 tools/build.py --stock mfp-daemon.new.stock --scan
   `addFailedAttempts` 等函数地址, 不必盲扫
 - 判断「OTA 后锁定逻辑是否变了」: 用符号表对比两版二进制的函数尺寸表, 再看目标函数里
   除 `adrp/add/bl/adr` 相对操作数之外是否逐字相同
-- **APatch 与 KernelSU/Magisk 的安装器差异** (v1.2 实机踩到, 已在 `customize.sh` 里兜底):
+- **APatch 与 KernelSU/Magisk 的安装器差异** (v1.2 实机踩到, 已在 `customize.sh` 里兜底, v1.3 沿用):
   - APatch 安装 `customize.sh` 时 **不导出 `MODDIR`**, `cwd` 是 `/dev/tmp` 且里面只有
     `module.prop`, 靠 `$0` 也拿不到模块目录; 只导出 `AP_MODULE=<id>`。
     所以自检必须用 `AP_MODULE` 拼 `modules_update/<id>` 兜底, 否则「适配列表」永远是空的
